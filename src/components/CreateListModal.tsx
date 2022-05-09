@@ -6,13 +6,19 @@ import Modal from './Modal';
 
 type CreateListModalProps = {
   onClose: () => void;
+  onCreate: (name: string) => void;
   open: boolean;
 };
 
 export default function CreateListModal(props: CreateListModalProps) {
-  const { onClose, open } = props;
+  const { onClose, onCreate, open } = props;
 
   const [listName, setListName] = useState('');
+
+  function handleCreate(): void {
+    onCreate(listName);
+    onClose();
+  }
 
   return (
     <Modal onClose={() => onClose()} open={open}>
@@ -25,7 +31,7 @@ export default function CreateListModal(props: CreateListModalProps) {
         />
         <div className="flex flex-row justify-center gap-2">
           <Button expand outline onClick={() => onClose()} text="Cancel" />
-          <Button expand text="Create" />
+          <Button expand onClick={() => handleCreate()} text="Create" />
         </div>
       </div>
     </Modal>
