@@ -15,7 +15,8 @@ export default function CreateListModal(props: CreateListModalProps) {
 
   const [listName, setListName] = useState('');
 
-  function handleCreate(): void {
+  function handleCreate(e: React.FormEvent<HTMLFormElement>): void {
+    e.preventDefault();
     onCreate(listName);
     handleClose();
   }
@@ -31,7 +32,7 @@ export default function CreateListModal(props: CreateListModalProps) {
       onClose={() => handleClose()}
       title="Create a new todo list"
     >
-      <div className="flex flex-col gap-2">
+      <form className="flex flex-col gap-2" onSubmit={(e) => handleCreate(e)}>
         <Input
           onChange={(v: string) => setListName(v)}
           placeholder="List name"
@@ -39,14 +40,9 @@ export default function CreateListModal(props: CreateListModalProps) {
         />
         <div className="flex flex-row justify-center gap-2">
           <Button expand onClick={() => handleClose()} text="Cancel" />
-          <Button
-            expand
-            onClick={() => handleCreate()}
-            text="Create"
-            variant="primary"
-          />
+          <Button expand text="Create" type="submit" variant="primary" />
         </div>
-      </div>
+      </form>
     </Modal>
   );
 }

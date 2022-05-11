@@ -46,6 +46,36 @@ export default function App() {
     setTodoLists(updatedTodoLists);
   }
 
+  async function handleCreateTodoItem(
+    listId: string,
+    todoItemText: string
+  ): Promise<void> {
+    const uuid: string = await invoke('get_uuid');
+    const newTodoItem = { id: uuid, text: todoItemText, complete: false };
+    const updatedTodoLists = [
+      ...todoLists.map((todoList) => {
+        if (todoList.id === listId) {
+          todoList.todos.push(newTodoItem);
+        }
+
+        return todoList;
+      }),
+    ];
+
+    invoke('write_todo_lists', {
+      todoLists: JSON.stringify(updatedTodoLists),
+    });
+
+    setTodoLists(updatedTodoLists);
+
+    if (selectedTodoList?.id === listId) {
+      setSelectedTodoList({
+        ...selectedTodoList,
+        todos: [...selectedTodoList.todos, newTodoItem],
+      });
+    }
+  }
+
   return (
     <div className="bg-gray-50 flex flex-row h-screen w-screen">
       <Sidebar
@@ -56,11 +86,18 @@ export default function App() {
       />
       {selectedTodoList && (
         <TodoListComponent
+          onCreateTodoItem={(listId: string, todoItemText: string) =>
+            handleCreateTodoItem(listId, todoItemText)
+          }
           onDeleteTodoList={(uuid: string) => handleDeleteTodoList(uuid)}
           todoList={selectedTodoList}
         />
       )}
-      {!selectedTodoList && <div>select a list</div>}
+      {!selectedTodoList && (
+        <div className="flex grow h-full justify-center items-center">
+          <p className="font-medium text-lg">Select a list to get started</p>
+        </div>
+      )}
     </div>
   );
 }

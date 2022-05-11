@@ -1,8 +1,10 @@
 type ButtonProps = {
+  className?: string;
   expand?: boolean;
   icon?: JSX.Element;
   onClick?: () => void;
   text?: string;
+  type?: 'submit' | 'button';
   variant?: Variant;
 };
 
@@ -17,14 +19,18 @@ const variants = {
 type Variant = keyof typeof variants;
 
 export default function Button(props: ButtonProps) {
-  const { expand, icon, onClick, text, variant } = props;
+  const { className, expand, icon, onClick, text, type, variant } = props;
 
   const classes = `border flex focus:outline-none font-medium justify-center px-3 py-1 rounded-md shadow-sm ${
     variant ? variants[variant] : variants.default
-  } ${expand ? 'grow' : ''}`;
+  } ${expand ? 'grow' : ''} ${className}`;
 
   return (
-    <button className={classes} onClick={onClick ? () => onClick() : undefined}>
+    <button
+      type={type ?? 'button'}
+      className={classes}
+      onClick={onClick ? () => onClick() : undefined}
+    >
       <span className="my-auto">{icon}</span>
       {text && <span className={`${icon ? 'ml-1' : ''}`}>{text}</span>}
     </button>
