@@ -2,29 +2,31 @@ type ButtonProps = {
   expand?: boolean;
   icon?: JSX.Element;
   onClick?: () => void;
-  outline?: boolean;
   text?: string;
+  variant?: Variant;
 };
 
+const variants = {
+  default: 'bg-gray-50 border-gray-100 hover:bg-gray-100 hover:border-gray-200',
+  primary:
+    'bg-blue-300 border-blue-400 hover:bg-blue-400 hover:border-blue-500 hover:text-white',
+  danger:
+    'bg-red-300 border-red-400 hover:bg-red-400 hover:border-red-500 hover:text-white',
+};
+
+type Variant = keyof typeof variants;
+
 export default function Button(props: ButtonProps) {
-  const { expand, icon, onClick, outline, text } = props;
+  const { expand, icon, onClick, text, variant } = props;
 
-  let conditionalStyles = `${
-    icon && !text ? 'rounded-full h-7 w-7' : 'px-2 py-1 rounded-md'
-  }`;
-
-  conditionalStyles += `${expand === true ? ' grow' : ''}`;
-  conditionalStyles += `${
-    outline === true ? '' : ' bg-purple-300 flex hover:bg-purple-400'
-  }`;
+  const classes = `border flex focus:outline-none font-medium justify-center px-3 py-1 rounded-md shadow-sm ${
+    variant ? variants[variant] : variants.default
+  } ${expand ? 'grow' : ''}`;
 
   return (
-    <button
-      className={`border-purple-300 border-2 justify-center ${conditionalStyles}`}
-      onClick={onClick ? () => onClick() : undefined}
-    >
-      {icon ? <span className="h-4 m-auto w-4">{icon}</span> : null}
-      {text ? <span className={`${icon ? 'ml-1' : ''}`}>{text}</span> : null}
+    <button className={classes} onClick={onClick ? () => onClick() : undefined}>
+      <span className="my-auto">{icon}</span>
+      {text && <span className={`${icon ? 'ml-1' : ''}`}>{text}</span>}
     </button>
   );
 }

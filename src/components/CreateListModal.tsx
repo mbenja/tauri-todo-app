@@ -17,21 +17,34 @@ export default function CreateListModal(props: CreateListModalProps) {
 
   function handleCreate(): void {
     onCreate(listName);
+    handleClose();
+  }
+
+  function handleClose(): void {
+    setListName('');
     onClose();
   }
 
   return (
-    <Modal onClose={() => onClose()} open={open}>
+    <Modal
+      open={open}
+      onClose={() => handleClose()}
+      title="Create a new todo list"
+    >
       <div className="flex flex-col gap-2">
-        <h2>Create a new todo list</h2>
         <Input
           onChange={(v: string) => setListName(v)}
           placeholder="List name"
           value={listName}
         />
         <div className="flex flex-row justify-center gap-2">
-          <Button expand outline onClick={() => onClose()} text="Cancel" />
-          <Button expand onClick={() => handleCreate()} text="Create" />
+          <Button expand onClick={() => handleClose()} text="Cancel" />
+          <Button
+            expand
+            onClick={() => handleCreate()}
+            text="Create"
+            variant="primary"
+          />
         </div>
       </div>
     </Modal>

@@ -2,16 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  h1 {
-    @apply font-semibold text-2xl;
-  }
-
-  h2 {
-    @apply font-semibold text-lg;
-  }
-}
-
 body {
   overflow: hidden;
   margin: 0;

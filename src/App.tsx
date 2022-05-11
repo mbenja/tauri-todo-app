@@ -47,10 +47,11 @@ export default function App() {
   }
 
   return (
-    <div className="bg-slate-100 flex flex-row h-screen w-screen">
+    <div className="bg-gray-50 flex flex-row h-screen w-screen">
       <Sidebar
         onCreateTodoList={(name: string) => handleCreateTodoList(name)}
         onSelectTodoList={(todoList: TodoList) => setSelectedTodoList(todoList)}
+        selectedTodoList={selectedTodoList}
         todoLists={todoLists}
       />
       {selectedTodoList && (
