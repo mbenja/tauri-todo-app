@@ -33,9 +33,29 @@ export default function App() {
     setSelectedTodoList(newTodoList);
   }
 
-  function handleDeleteTodoList(uuid: string): void {
+  function handleRenameTodoList(listId: string, newName: string): void {
+    const todoListIndex = todoLists.findIndex((list) => list.id === listId);
+    if (todoListIndex !== -1) {
+      const updatedTodoLists = [...todoLists];
+      updatedTodoLists[todoListIndex].name = newName;
+
+      invoke('write_todo_lists', {
+        todoLists: JSON.stringify(updatedTodoLists),
+      });
+
+      setTodoLists(updatedTodoLists);
+
+      if (selectedTodoList?.id === listId) {
+        setSelectedTodoList({
+          ...updatedTodoLists[todoListIndex],
+        });
+      }
+    }
+  }
+
+  function handleDeleteTodoList(listId: string): void {
     const updatedTodoLists = [
-      ...todoLists.filter((todoList: TodoList) => todoList.id !== uuid),
+      ...todoLists.filter((todoList: TodoList) => todoList.id !== listId),
     ];
 
     invoke('write_todo_lists', {
@@ -133,7 +153,10 @@ export default function App() {
           onCreateTodoItem={(listId: string, todoItemText: string) =>
             handleCreateTodoItem(listId, todoItemText)
           }
-          onDeleteTodoList={(uuid: string) => handleDeleteTodoList(uuid)}
+          onRenameTodoList={(listId: string, newName: string) =>
+            handleRenameTodoList(listId, newName)
+          }
+          onDeleteTodoList={(listId: string) => handleDeleteTodoList(listId)}
           onDeleteTodoItem={(listId: string, todoItemId: string) =>
             handleDeleteTodoItem(listId, todoItemId)
           }

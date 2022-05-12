@@ -7,10 +7,12 @@ import DeleteListModal from './DeleteListModal';
 import Input from './Input';
 import { CheckIcon, MinusSmIcon, XIcon } from '@heroicons/react/solid';
 import { TodoItem } from '../types/TodoItem';
+import RenameListModal from './RenameListModal';
 
 type TodoListProps = {
   onCreateTodoItem: (listId: string, todoItemText: string) => void;
-  onDeleteTodoList: (uuid: string) => void;
+  onRenameTodoList: (listId: string, newName: string) => void;
+  onDeleteTodoList: (listId: string) => void;
   onDeleteTodoItem: (listId: string, todoItemId: string) => void;
   onUpdateTodoItemComplete: (
     listId: string,
@@ -23,12 +25,14 @@ type TodoListProps = {
 export default function TodoListComponent(props: TodoListProps) {
   const {
     onCreateTodoItem,
+    onRenameTodoList,
     onDeleteTodoList,
     onDeleteTodoItem,
     onUpdateTodoItemComplete,
     todoList,
   } = props;
 
+  const [renameListModalOpen, setRenameListModalOpen] = useState(false);
   const [deleteListModalOpen, setDeleteListModalOpen] = useState(false);
   const [newTodoItemText, setNewTodoItemText] = useState('');
 
@@ -43,7 +47,10 @@ export default function TodoListComponent(props: TodoListProps) {
   return (
     <div className="flex flex-col grow px-4 py-2">
       <div className="flex flex-row justify-between">
-        <Button icon={<PencilIcon className="h-4 w-4" />} />
+        <Button
+          icon={<PencilIcon className="h-4 w-4" />}
+          onClick={() => setRenameListModalOpen(true)}
+        />
         <p className="font-medium ml-4 text-center text-2xl">{todoList.name}</p>
         <Button
           icon={<TrashIcon className="h-4 w-4" />}
@@ -79,6 +86,11 @@ export default function TodoListComponent(props: TodoListProps) {
           variant="primary"
         />
       </form>
+      <RenameListModal
+        open={renameListModalOpen}
+        onClose={() => setRenameListModalOpen(false)}
+        onRename={(newName: string) => onRenameTodoList(todoList.id, newName)}
+      />
       <DeleteListModal
         open={deleteListModalOpen}
         onClose={() => setDeleteListModalOpen(false)}
