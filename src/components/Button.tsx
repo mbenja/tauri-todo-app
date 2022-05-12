@@ -9,11 +9,16 @@ type ButtonProps = {
 };
 
 const variants = {
-  default: 'bg-gray-50 border-gray-100 hover:bg-gray-100 hover:border-gray-200',
+  default:
+    'bg-gray-100 border-gray-200 hover:bg-gray-200 hover:border-gray-300',
   primary:
     'bg-blue-300 border-blue-400 hover:bg-blue-400 hover:border-blue-500 hover:text-white',
   danger:
     'bg-red-300 border-red-400 hover:bg-red-400 hover:border-red-500 hover:text-white',
+  success:
+    'bg-green-300 border-green-400 hover:bg-green-400 hover:border-green-500 hover:text-white',
+  ghost:
+    'bg-transparent border-transparent hover:bg-gray-200 hover:border hover:border-gray-300 shadow-none',
 };
 
 type Variant = keyof typeof variants;

@@ -50,29 +50,73 @@ export default function App() {
     listId: string,
     todoItemText: string
   ): Promise<void> {
-    const uuid: string = await invoke('get_uuid');
-    const newTodoItem = { id: uuid, text: todoItemText, complete: false };
-    const updatedTodoLists = [
-      ...todoLists.map((todoList) => {
-        if (todoList.id === listId) {
-          todoList.todos.push(newTodoItem);
-        }
+    const todoListIndex = todoLists.findIndex((list) => list.id === listId);
+    if (todoListIndex !== -1) {
+      const uuid: string = await invoke('get_uuid');
+      const newTodoItem = { id: uuid, text: todoItemText, complete: false };
+      const updatedTodoLists = [...todoLists];
 
-        return todoList;
-      }),
-    ];
+      updatedTodoLists[todoListIndex].todos.push(newTodoItem);
 
-    invoke('write_todo_lists', {
-      todoLists: JSON.stringify(updatedTodoLists),
-    });
-
-    setTodoLists(updatedTodoLists);
-
-    if (selectedTodoList?.id === listId) {
-      setSelectedTodoList({
-        ...selectedTodoList,
-        todos: [...selectedTodoList.todos, newTodoItem],
+      invoke('write_todo_lists', {
+        todoLists: JSON.stringify(updatedTodoLists),
       });
+
+      setTodoLists(updatedTodoLists);
+
+      if (selectedTodoList?.id === listId) {
+        setSelectedTodoList({
+          ...updatedTodoLists[todoListIndex],
+        });
+      }
+    }
+  }
+
+  function handleUpdateTodoItemComplete(
+    listId: string,
+    todoItemId: string,
+    complete: boolean
+  ): void {
+    const todoListIndex = todoLists.findIndex((list) => list.id === listId);
+    if (todoListIndex !== -1) {
+      const updatedTodoLists = [...todoLists];
+      const todoItemIndex = updatedTodoLists[todoListIndex].todos.findIndex(
+        (todo) => todo.id === todoItemId
+      );
+      if (todoItemIndex !== -1) {
+        updatedTodoLists[todoListIndex].todos[todoItemIndex].complete =
+          complete;
+
+        invoke('write_todo_lists', {
+          todoLists: JSON.stringify(updatedTodoLists),
+        });
+
+        setTodoLists(updatedTodoLists);
+
+        if (selectedTodoList?.id === listId) {
+          setSelectedTodoList({ ...updatedTodoLists[todoListIndex] });
+        }
+      }
+    }
+  }
+
+  function handleDeleteTodoItem(listId: string, todoItemId: string): void {
+    const todoListIndex = todoLists.findIndex((list) => list.id === listId);
+    if (todoListIndex !== -1) {
+      const updatedTodoLists = [...todoLists];
+      updatedTodoLists[todoListIndex].todos = updatedTodoLists[
+        todoListIndex
+      ].todos.filter((todo) => todo.id !== todoItemId);
+
+      invoke('write_todo_lists', {
+        todoLists: JSON.stringify(updatedTodoLists),
+      });
+
+      setTodoLists(updatedTodoLists);
+
+      if (selectedTodoList?.id === listId) {
+        setSelectedTodoList({ ...updatedTodoLists[todoListIndex] });
+      }
     }
   }
 
@@ -90,6 +134,14 @@ export default function App() {
             handleCreateTodoItem(listId, todoItemText)
           }
           onDeleteTodoList={(uuid: string) => handleDeleteTodoList(uuid)}
+          onDeleteTodoItem={(listId: string, todoItemId: string) =>
+            handleDeleteTodoItem(listId, todoItemId)
+          }
+          onUpdateTodoItemComplete={(
+            listId: string,
+            todoId: string,
+            complete: boolean
+          ) => handleUpdateTodoItemComplete(listId, todoId, complete)}
           todoList={selectedTodoList}
         />
       )}

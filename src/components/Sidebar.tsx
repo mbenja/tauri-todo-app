@@ -19,7 +19,7 @@ export default function Sidebar(props: SidebarProps) {
   const [createListModalOpen, setCreateListModalOpen] = useState(false);
 
   return (
-    <div className="bg-gray-50 border-gray-100 border-r flex flex-col max-w-lg min-w-[200px] overflow-auto py-2 w-1/4">
+    <div className="bg-gray-50 border-gray-100 border-r flex flex-col max-w-lg min-w-[200px] py-2 w-1/4">
       <div className="flex flex-row justify-between mb-2 px-4">
         <p className="flex font-medium self-end text-lg">Lists</p>
         <Button
@@ -32,7 +32,7 @@ export default function Sidebar(props: SidebarProps) {
         onCreate={(name: string) => onCreateTodoList(name)}
         open={createListModalOpen}
       />
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 overflow-auto">
         {todoLists.map((todoList: TodoList) => (
           <SidebarListItem
             count={todoList.todos.length}

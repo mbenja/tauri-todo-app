@@ -17,8 +17,10 @@ export default function CreateListModal(props: CreateListModalProps) {
 
   function handleCreate(e: React.FormEvent<HTMLFormElement>): void {
     e.preventDefault();
-    onCreate(listName);
-    handleClose();
+    if (listName.length > 0) {
+      onCreate(listName);
+      handleClose();
+    }
   }
 
   function handleClose(): void {
