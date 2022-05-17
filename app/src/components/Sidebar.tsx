@@ -4,17 +4,13 @@ import { PlusIcon } from '@heroicons/react/solid';
 import Button from './Button';
 import CreateListModal from './CreateListModal';
 import { TodoList } from '../types/TodoList';
+import { useStore } from '../store/store';
 
-type SidebarProps = {
-  onCreateTodoList: (name: string) => void;
-  onSelectTodoList: (todoList: TodoList) => void;
-  selectedTodoList: TodoList | null;
-  todoLists: TodoList[];
-};
-
-export default function Sidebar(props: SidebarProps) {
-  const { onCreateTodoList, onSelectTodoList, selectedTodoList, todoLists } =
-    props;
+export default function Sidebar() {
+  const todoLists = useStore((state) => state.todoLists);
+  const selectedTodoList = useStore((state) => state.selectedTodoList);
+  const onCreateTodoList = useStore((state) => state.createTodoList);
+  const onSelectTodoList = useStore((state) => state.selectTodoList);
 
   const [createListModalOpen, setCreateListModalOpen] = useState(false);
 
@@ -35,10 +31,11 @@ export default function Sidebar(props: SidebarProps) {
       <div className="flex flex-col gap-2 overflow-auto">
         {todoLists.map((todoList: TodoList) => (
           <SidebarListItem
+            key={`sidebar-item-${todoList.id}`}
             count={todoList.todos.length}
             onClick={() => onSelectTodoList(todoList)}
             name={todoList.name}
-            selected={selectedTodoList?.id === todoList.id}
+            selected={selectedTodoList === todoList}
           />
         ))}
       </div>

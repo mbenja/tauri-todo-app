@@ -26,12 +26,12 @@ pub async fn get_todo_lists(
 #[tauri::command(async)]
 pub async fn create_todo_list(
   state: tauri::State<'_, AppState>,
-  new_list_name: String,
+  name: String,
 ) -> Result<todo_list::Data, String> {
   match state
     .prisma_client
     .todo_list()
-    .create(todo_list::name::set(new_list_name), vec![])
+    .create(todo_list::name::set(name), vec![])
     .with(todo_list::todos::fetch(vec![]))
     .exec()
     .await
@@ -76,6 +76,7 @@ pub async fn rename_todo_list(
     .todo_list()
     .find_unique(todo_list::id::equals(list_id))
     .update(vec![todo_list::name::set(new_name)])
+    .with(todo_list::todos::fetch(vec![]))
     .exec()
     .await
   {

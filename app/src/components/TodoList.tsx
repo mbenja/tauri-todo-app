@@ -5,33 +5,25 @@ import { TodoList } from '../types/TodoList';
 import Button from './Button';
 import DeleteListModal from './DeleteListModal';
 import Input from './Input';
-import { CheckIcon, MinusSmIcon, XIcon } from '@heroicons/react/solid';
+import { CheckIcon, MinusSmIcon } from '@heroicons/react/solid';
 import { TodoItem } from '../types/TodoItem';
 import RenameListModal from './RenameListModal';
+import { useStore } from '../store/store';
 
 type TodoListProps = {
-  onCreateTodoItem: (listId: number, todoItemText: string) => void;
-  onRenameTodoList: (listId: number, newName: string) => void;
-  onDeleteTodoList: (listId: number) => void;
-  onDeleteTodoItem: (listId: number, todoItemId: number) => void;
-  onUpdateTodoItemComplete: (
-    listId: number,
-    todoId: number,
-    complete: boolean
-  ) => void;
   todoList: TodoList;
 };
 
 export default function TodoListComponent(props: TodoListProps) {
-  const {
-    onCreateTodoItem,
-    onRenameTodoList,
-    onDeleteTodoList,
-    onDeleteTodoItem,
-    onUpdateTodoItemComplete,
-    todoList,
-  } = props;
+  const { todoList } = props;
 
+  const onRenameTodoList = useStore((store) => store.renameTodoList);
+  const onDeleteTodoList = useStore((store) => store.deleteTodoList);
+  const onCreateTodoItem = useStore((store) => store.createTodoItem);
+  const onDeleteTodoItem = useStore((store) => store.deleteTodoItem);
+  const onUpdateTodoItemComplete = useStore(
+    (store) => store.updateTodoItemComplete
+  );
   const [renameListModalOpen, setRenameListModalOpen] = useState(false);
   const [deleteListModalOpen, setDeleteListModalOpen] = useState(false);
   const [newTodoItemText, setNewTodoItemText] = useState('');
