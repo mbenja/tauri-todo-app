@@ -2,6 +2,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 import create from 'zustand';
 
 import { State } from '../types/State';
+import { Theme } from '../types/Theme';
 import { TodoItem } from '../types/TodoItem';
 import { TodoList } from '../types/TodoList';
 
@@ -105,5 +106,14 @@ export const useStore = create<State>((set, get) => ({
         }),
       ],
     });
+  },
+  theme: localStorage.getItem('theme') === 'dark' ? 'dark' : 'light',
+  setTheme: (theme?: Theme) => {
+    theme = theme ?? get().theme;
+    theme === 'dark'
+      ? document.body.classList.add('dark')
+      : document.body.classList.remove('dark');
+    localStorage.setItem('theme', theme);
+    set({ theme });
   },
 }));

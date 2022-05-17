@@ -63,7 +63,7 @@ export default function TodoListComponent(props: TodoListProps) {
         ))}
       </div>
       <form
-        className="border border-gray-100 flex flex-row px-4 py-4 rounded-md shadow-sm"
+        className="border border-gray-100 dark:border-slate-700 flex flex-row px-4 py-4 rounded-md shadow-sm"
         onSubmit={(e) => handleOnCreateTodoItem(e)}
       >
         <Input

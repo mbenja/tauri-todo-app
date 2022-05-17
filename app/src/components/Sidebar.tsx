@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PlusIcon } from '@heroicons/react/solid';
+import { MoonIcon, PlusIcon, SunIcon } from '@heroicons/react/solid';
 
 import Button from './Button';
 import CreateListModal from './CreateListModal';
@@ -11,11 +11,13 @@ export default function Sidebar() {
   const selectedTodoList = useStore((state) => state.selectedTodoList);
   const onCreateTodoList = useStore((state) => state.createTodoList);
   const onSelectTodoList = useStore((state) => state.selectTodoList);
+  const theme = useStore((state) => state.theme);
+  const setTheme = useStore((state) => state.setTheme);
 
   const [createListModalOpen, setCreateListModalOpen] = useState(false);
 
   return (
-    <div className="bg-gray-50 border-gray-100 border-r flex flex-col max-w-lg min-w-[200px] py-2 w-1/4">
+    <div className="border-gray-100 border-r dark:border-slate-900 flex flex-col max-w-lg min-w-[200px] py-2 w-1/4">
       <div className="flex flex-row justify-between mb-2 px-4">
         <p className="flex font-medium self-end text-lg">Lists</p>
         <Button
@@ -28,7 +30,7 @@ export default function Sidebar() {
         onCreate={(name: string) => onCreateTodoList(name)}
         open={createListModalOpen}
       />
-      <div className="flex flex-col gap-2 overflow-auto">
+      <div className="flex flex-col gap-2 grow overflow-auto">
         {todoLists.map((todoList: TodoList) => (
           <SidebarListItem
             key={`sidebar-item-${todoList.id}`}
@@ -38,6 +40,20 @@ export default function Sidebar() {
             selected={selectedTodoList === todoList}
           />
         ))}
+      </div>
+      <div className="flex flex-row px-2">
+        {theme === 'dark' && (
+          <Button
+            icon={<SunIcon className="h-6 w-4" />}
+            onClick={() => setTheme('light')}
+          />
+        )}
+        {theme === 'light' && (
+          <Button
+            icon={<MoonIcon className="h-6 w-4" />}
+            onClick={() => setTheme('dark')}
+          />
+        )}
       </div>
     </div>
   );
@@ -54,7 +70,9 @@ function SidebarListItem(props: SidebarListItemProps) {
   const { count, onClick, name, selected } = props;
 
   const classes = `cursor-pointer mx-2 rounded-md ${
-    selected ? 'bg-gray-200' : 'hover:bg-gray-100'
+    selected
+      ? 'bg-gray-200 dark:bg-slate-600'
+      : 'hover:bg-gray-100 hover:dark:bg-slate-700'
   }`;
 
   return (

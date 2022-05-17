@@ -1,3 +1,4 @@
+import { Theme } from './Theme';
 import { TodoList } from './TodoList';
 
 export type State = {
@@ -15,4 +16,6 @@ export type State = {
     complete: boolean
   ) => void;
   deleteTodoItem: (listId: number, todoId: number) => void;
+  theme: Theme;
+  setTheme: (theme?: Theme) => void;
 };

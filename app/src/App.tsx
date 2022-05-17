@@ -8,9 +8,11 @@ export default function App() {
   const todoLists = useStore((state) => state.todoLists);
   const selectedTodoList = useStore((state) => state.selectedTodoList);
   const selectTodoList = useStore((state) => state.selectTodoList);
+  const setTheme = useStore((state) => state.setTheme);
 
   useEffect(() => {
     getTodoLists();
+    setTheme();
   }, []);
 
   useEffect(() => {
@@ -23,7 +25,7 @@ export default function App() {
   }, [todoLists]);
 
   return (
-    <div className="bg-gray-50 flex flex-row h-screen w-screen">
+    <div className="bg-gray-50 dark:bg-slate-800 dark:text-white flex flex-row h-screen w-screen">
       <Sidebar />
       {selectedTodoList && <TodoListComponent todoList={selectedTodoList} />}
       {!selectedTodoList && (
