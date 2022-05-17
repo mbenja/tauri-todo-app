@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { PencilIcon, TrashIcon } from '@heroicons/react/outline';
 
+import { PencilIcon, TrashIcon } from '@heroicons/react/outline';
+import { CheckIcon, MinusSmIcon } from '@heroicons/react/solid';
+
+import { useStore } from '../store/store';
+import { TodoItem } from '../types/TodoItem';
 import { TodoList } from '../types/TodoList';
 import Button from './Button';
 import DeleteListModal from './DeleteListModal';
 import Input from './Input';
-import { CheckIcon, MinusSmIcon } from '@heroicons/react/solid';
-import { TodoItem } from '../types/TodoItem';
 import RenameListModal from './RenameListModal';
-import { useStore } from '../store/store';
 
 type TodoListProps = {
   todoList: TodoList;

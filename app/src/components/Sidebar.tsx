@@ -1,10 +1,11 @@
 import { useState } from 'react';
+
 import { MoonIcon, PlusIcon, SunIcon } from '@heroicons/react/solid';
 
+import { useStore } from '../store/store';
+import { TodoList } from '../types/TodoList';
 import Button from './Button';
 import CreateListModal from './CreateListModal';
-import { TodoList } from '../types/TodoList';
-import { useStore } from '../store/store';
 
 export default function Sidebar() {
   const todoLists = useStore((state) => state.todoLists);
