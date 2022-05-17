@@ -3,9 +3,11 @@
   windows_subsystem = "windows"
 )]
 
+use menu::get_menu;
 use state::AppState;
 
 mod commands;
+mod menu;
 mod prisma;
 mod state;
 
@@ -16,6 +18,7 @@ async fn main() {
     .expect("Error starting Prisma client");
 
   tauri::Builder::default()
+    .menu(get_menu())
     .manage(AppState {
       prisma_client: client,
     })
