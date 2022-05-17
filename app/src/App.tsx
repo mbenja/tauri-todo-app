@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 import Sidebar from './components/Sidebar';
 import TodoListComponent from './components/TodoList';
+import { TodoItem } from './types/TodoItem';
 import { TodoList } from './types/TodoList';
 
 export default function App() {
@@ -16,33 +17,38 @@ export default function App() {
   }, []);
 
   async function getTodoLists(): Promise<void> {
-    const todoLists: TodoList[] = JSON.parse(await invoke('read_todo_lists'));
+    const todoLists: TodoList[] = await invoke('get_todo_lists');
     setTodoLists(todoLists);
   }
 
   async function handleCreateTodoList(name: string): Promise<void> {
-    const uuid: string = await invoke('get_uuid');
-    const newTodoList = { id: uuid, name, todos: [] };
-    const updatedTodoLists = [...todoLists, newTodoList];
-
-    invoke('write_todo_lists', {
-      todoLists: JSON.stringify(updatedTodoLists),
-    });
-
-    setTodoLists(updatedTodoLists);
+    const newTodoList: TodoList = await invoke('create_todo_list', { newListName: name });
+    setTodoLists([...todoLists, newTodoList]);
     setSelectedTodoList(newTodoList);
   }
 
-  function handleRenameTodoList(listId: string, newName: string): void {
+  async function handleDeleteTodoList(listId: number): Promise<void> {
+    const result = await invoke('delete_todo_list', {
+      listId,
+    });
+
+    console.log(result);
+
+    setTodoLists([...todoLists.filter((todoList: TodoList) => todoList.id !== listId)]);
+    setSelectedTodoList(null);
+  }
+
+  async function handleRenameTodoList(listId: number, newName: string): Promise<void> {
+    const result = await invoke('rename_todo_list', {
+      listId,
+      newName
+    });
+
     const todoListIndex = todoLists.findIndex((list) => list.id === listId);
     if (todoListIndex !== -1) {
       const updatedTodoLists = [...todoLists];
       updatedTodoLists[todoListIndex].name = newName;
 
-      invoke('write_todo_lists', {
-        todoLists: JSON.stringify(updatedTodoLists),
-      });
-
       setTodoLists(updatedTodoLists);
 
       if (selectedTodoList?.id === listId) {
@@ -51,36 +57,21 @@ export default function App() {
         });
       }
     }
-  }
-
-  function handleDeleteTodoList(listId: string): void {
-    const updatedTodoLists = [
-      ...todoLists.filter((todoList: TodoList) => todoList.id !== listId),
-    ];
-
-    invoke('write_todo_lists', {
-      todoLists: JSON.stringify(updatedTodoLists),
-    });
-
-    setSelectedTodoList(null);
-    setTodoLists(updatedTodoLists);
   }
 
   async function handleCreateTodoItem(
-    listId: string,
-    todoItemText: string
+    listId: number,
+    todoText: string
   ): Promise<void> {
+    const newTodo: TodoItem = await invoke('create_todo_item', {
+      listId, todoText
+    });
+
     const todoListIndex = todoLists.findIndex((list) => list.id === listId);
     if (todoListIndex !== -1) {
-      const uuid: string = await invoke('get_uuid');
-      const newTodoItem = { id: uuid, text: todoItemText, complete: false };
       const updatedTodoLists = [...todoLists];
 
-      updatedTodoLists[todoListIndex].todos.push(newTodoItem);
-
-      invoke('write_todo_lists', {
-        todoLists: JSON.stringify(updatedTodoLists),
-      });
+      updatedTodoLists[todoListIndex].todos.push(newTodo);
 
       setTodoLists(updatedTodoLists);
 
@@ -92,24 +83,22 @@ export default function App() {
     }
   }
 
-  function handleUpdateTodoItemComplete(
-    listId: string,
-    todoItemId: string,
+  async function handleUpdateTodoItemComplete(
+    listId: number,
+    todoId: number,
     complete: boolean
-  ): void {
+  ): Promise<void> {
+    const updatedTodo: TodoItem = await invoke('update_todo_item_complete', { listId, todoId, complete });
+    console.log(updatedTodo);
+
     const todoListIndex = todoLists.findIndex((list) => list.id === listId);
     if (todoListIndex !== -1) {
       const updatedTodoLists = [...todoLists];
       const todoItemIndex = updatedTodoLists[todoListIndex].todos.findIndex(
-        (todo) => todo.id === todoItemId
+        (todo) => todo.id === todoId
       );
       if (todoItemIndex !== -1) {
-        updatedTodoLists[todoListIndex].todos[todoItemIndex].complete =
-          complete;
-
-        invoke('write_todo_lists', {
-          todoLists: JSON.stringify(updatedTodoLists),
-        });
+        updatedTodoLists[todoListIndex].todos[todoItemIndex] = updatedTodo;
 
         setTodoLists(updatedTodoLists);
 
@@ -120,17 +109,15 @@ export default function App() {
     }
   }
 
-  function handleDeleteTodoItem(listId: string, todoItemId: string): void {
+  async function handleDeleteTodoItem(listId: number, todoId: number): Promise<void> {
+    await invoke('delete_todo_item', { todoId });
+
     const todoListIndex = todoLists.findIndex((list) => list.id === listId);
     if (todoListIndex !== -1) {
       const updatedTodoLists = [...todoLists];
       updatedTodoLists[todoListIndex].todos = updatedTodoLists[
         todoListIndex
-      ].todos.filter((todo) => todo.id !== todoItemId);
-
-      invoke('write_todo_lists', {
-        todoLists: JSON.stringify(updatedTodoLists),
-      });
+      ].todos.filter((todo) => todo.id !== todoId);
 
       setTodoLists(updatedTodoLists);
 
@@ -150,19 +137,19 @@ export default function App() {
       />
       {selectedTodoList && (
         <TodoListComponent
-          onCreateTodoItem={(listId: string, todoItemText: string) =>
+          onCreateTodoItem={(listId: number, todoItemText: string) =>
             handleCreateTodoItem(listId, todoItemText)
           }
-          onRenameTodoList={(listId: string, newName: string) =>
+          onRenameTodoList={(listId: number, newName: string) =>
             handleRenameTodoList(listId, newName)
           }
-          onDeleteTodoList={(listId: string) => handleDeleteTodoList(listId)}
-          onDeleteTodoItem={(listId: string, todoItemId: string) =>
+          onDeleteTodoList={(listId: number) => handleDeleteTodoList(listId)}
+          onDeleteTodoItem={(listId: number, todoItemId: number) =>
             handleDeleteTodoItem(listId, todoItemId)
           }
           onUpdateTodoItemComplete={(
-            listId: string,
-            todoId: string,
+            listId: number,
+            todoId: number,
             complete: boolean
           ) => handleUpdateTodoItemComplete(listId, todoId, complete)}
           todoList={selectedTodoList}

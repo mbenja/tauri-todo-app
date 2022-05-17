@@ -10,13 +10,13 @@ import { TodoItem } from '../types/TodoItem';
 import RenameListModal from './RenameListModal';
 
 type TodoListProps = {
-  onCreateTodoItem: (listId: string, todoItemText: string) => void;
-  onRenameTodoList: (listId: string, newName: string) => void;
-  onDeleteTodoList: (listId: string) => void;
-  onDeleteTodoItem: (listId: string, todoItemId: string) => void;
+  onCreateTodoItem: (listId: number, todoItemText: string) => void;
+  onRenameTodoList: (listId: number, newName: string) => void;
+  onDeleteTodoList: (listId: number) => void;
+  onDeleteTodoItem: (listId: number, todoItemId: number) => void;
   onUpdateTodoItemComplete: (
-    listId: string,
-    todoId: string,
+    listId: number,
+    todoId: number,
     complete: boolean
   ) => void;
   todoList: TodoList;
@@ -60,10 +60,10 @@ export default function TodoListComponent(props: TodoListProps) {
       <div className="flex flex-col gap-4 grow my-4 overflow-y-auto">
         {todoList.todos.map((todoItem) => (
           <TodoItemComponent
-            onDelete={(todoItemId: string) =>
+            onDelete={(todoItemId: number) =>
               onDeleteTodoItem(todoList.id, todoItemId)
             }
-            onUpdateComplete={(todoItemId: string, complete: boolean) =>
+            onUpdateComplete={(todoItemId: number, complete: boolean) =>
               onUpdateTodoItemComplete(todoList.id, todoItemId, complete)
             }
             todoItem={todoItem}
@@ -101,8 +101,8 @@ export default function TodoListComponent(props: TodoListProps) {
 }
 
 type TodoItemProps = {
-  onDelete: (todoItemId: string) => void;
-  onUpdateComplete: (todoItemId: string, complete: boolean) => void;
+  onDelete: (todoItemId: number) => void;
+  onUpdateComplete: (todoItemId: number, complete: boolean) => void;
   todoItem: TodoItem;
 };
 

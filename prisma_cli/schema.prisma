@@ -1,0 +1,23 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:dev.db"
+}
+
+generator client {
+  provider = "cargo prisma"
+  output   = "../app/src-tauri/src/prisma.rs"
+}
+
+model TodoList {
+  id    Int @id @default(autoincrement())
+  name  String
+  todos TodoItem[]
+}
+
+model TodoItem {
+  id         Int @id @default(autoincrement())
+  todoList   TodoList @relation(fields: [todoListId], references: [id])
+  todoListId Int
+  text       String
+  complete   Boolean @default(false)
+}
