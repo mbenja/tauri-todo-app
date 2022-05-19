@@ -1,5 +1,5 @@
 use crate::{
-  prisma::{todo_item, todo_list},
+  db::prisma::{todo_item, todo_list},
   state::AppState,
 };
 

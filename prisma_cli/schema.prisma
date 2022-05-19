@@ -5,7 +5,7 @@ datasource db {
 
 generator client {
   provider = "cargo prisma"
-  output   = "../app/src-tauri/src/prisma.rs"
+  output   = "../app/src-tauri/src/db/prisma.rs"
 }
 
 model TodoList {

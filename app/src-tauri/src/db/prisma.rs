@@ -15,7 +15,7 @@ pub use prisma_client_rust::{query::Error as QueryError, NewClientError};
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::sync::Arc;
-static DATAMODEL_STR : & 'static str = "datasource db {\n  provider = \"sqlite\"\n  url      = \"file:dev.db\"\n}\n\ngenerator client {\n  provider = \"cargo prisma\"\n  output   = \"../app/src-tauri/src/prisma.rs\"\n}\n\nmodel TodoList {\n  id    Int @id @default(autoincrement())\n  name  String\n  todos TodoItem[]\n}\n\nmodel TodoItem {\n  id         Int @id @default(autoincrement())\n  todoList   TodoList @relation(fields: [todoListId], references: [id])\n  todoListId Int\n  text       String\n  complete   Boolean @default(false)\n}" ;
+static DATAMODEL_STR : & 'static str = "datasource db {\n  provider = \"sqlite\"\n  url      = \"file:dev.db\"\n}\n\ngenerator client {\n  provider = \"cargo prisma\"\n  output   = \"../app/src-tauri/src/db/prisma.rs\"\n}\n\nmodel TodoList {\n  id    Int @id @default(autoincrement())\n  name  String\n  todos TodoItem[]\n}\n\nmodel TodoItem {\n  id         Int @id @default(autoincrement())\n  todoList   TodoList @relation(fields: [todoListId], references: [id])\n  todoListId Int\n  text       String\n  complete   Boolean @default(false)\n}" ;
 pub struct PrismaClient {
   executor: Box<dyn QueryExecutor + Send + Sync + 'static>,
   query_schema: Arc<QuerySchema>,
