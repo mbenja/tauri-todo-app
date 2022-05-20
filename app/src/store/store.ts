@@ -1,6 +1,9 @@
+import toast from 'react-hot-toast';
+
 import { invoke } from '@tauri-apps/api/tauri';
 import create from 'zustand';
 
+import { Result } from '../types/Result';
 import { State } from '../types/State';
 import { Theme } from '../types/Theme';
 import { TodoItem } from '../types/TodoItem';
@@ -13,18 +16,38 @@ export const useStore = create<State>((set, get) => ({
     set({ selectedTodoList: todoList });
   },
   getTodoLists: async () => {
-    const todoLists: TodoList[] = await invoke('get_todo_lists');
-    set({ todoLists: todoLists });
+    const result: Result<TodoList[], string> = await invoke('get_todo_lists');
+    if (typeof result === 'string') {
+      toast.error(`Something went wrong: ${result}`);
+      return;
+    }
+
+    set({ todoLists: result });
   },
   createTodoList: async (name: string) => {
-    const newTodoList: TodoList = await invoke('create_todo_list', { name });
+    const result: Result<TodoList, string> = await invoke('create_todo_list', {
+      name,
+    });
+
+    if (typeof result === 'string') {
+      toast.error(`Something went wrong: ${result}`);
+      return;
+    }
+
     set({
-      todoLists: [...get().todoLists, newTodoList],
-      selectedTodoList: newTodoList,
+      todoLists: [...get().todoLists, result],
+      selectedTodoList: result,
     });
   },
   deleteTodoList: async (listId: number) => {
-    const result: TodoList = await invoke('delete_todo_list', { listId });
+    const result: Result<TodoList, string> = await invoke('delete_todo_list', {
+      listId,
+    });
+    if (typeof result === 'string') {
+      toast.error(`Something went wrong: ${result}`);
+      return;
+    }
+
     set({
       todoLists: [
         ...get().todoLists.filter((todoList) => todoList.id !== listId),
@@ -33,11 +56,16 @@ export const useStore = create<State>((set, get) => ({
     });
   },
   renameTodoList: async (listId: number, newName: string) => {
-    const result: TodoList = await invoke('rename_todo_list', {
+    const result: Result<TodoList, string> = await invoke('rename_todo_list', {
       listId,
       newName,
     });
-    console.log('todoList:', result);
+
+    if (typeof result === 'string') {
+      toast.error(`Something went wrong: ${result}`);
+      return;
+    }
+
     set({
       todoLists: [
         ...get().todoLists.map((todoList) => {
@@ -51,15 +79,21 @@ export const useStore = create<State>((set, get) => ({
     });
   },
   createTodoItem: async (listId: number, todoText: string) => {
-    const newTodo: TodoItem = await invoke('create_todo_item', {
+    const result: Result<TodoItem, string> = await invoke('create_todo_item', {
       listId,
       todoText,
     });
+
+    if (typeof result === 'string') {
+      toast.error(`Something went wrong: ${result}`);
+      return;
+    }
+
     set({
       todoLists: [
         ...get().todoLists.map((todoList) => {
           if (todoList.id === listId) {
-            todoList.todos.push(newTodo);
+            todoList.todos.push(result);
           }
 
           return todoList;
@@ -72,17 +106,26 @@ export const useStore = create<State>((set, get) => ({
     todoId: number,
     complete: boolean
   ) => {
-    const updatedTodo: TodoItem = await invoke('update_todo_item_complete', {
-      listId,
-      todoId,
-      complete,
-    });
+    const result: Result<TodoItem, string> = await invoke(
+      'update_todo_item_complete',
+      {
+        listId,
+        todoId,
+        complete,
+      }
+    );
+
+    if (typeof result === 'string') {
+      toast.error(`Something went wrong: ${result}`);
+      return;
+    }
+
     set({
       todoLists: [
         ...get().todoLists.map((todoList) => {
           if (todoList.id === listId) {
             todoList.todos = todoList.todos.map((todoItem) => {
-              return todoItem.id === todoId ? updatedTodo : todoItem;
+              return todoItem.id === todoId ? result : todoItem;
             });
           }
 
@@ -92,7 +135,14 @@ export const useStore = create<State>((set, get) => ({
     });
   },
   deleteTodoItem: async (listId: number, todoId: number) => {
-    const result = await invoke('delete_todo_item', { todoId });
+    const result: Result<TodoItem, string> = await invoke('delete_todo_item', {
+      todoId,
+    });
+    if (typeof result === 'string') {
+      toast.error(`Something went wrong: ${result}`);
+      return;
+    }
+
     set({
       todoLists: [
         ...get().todoLists.map((todoList) => {

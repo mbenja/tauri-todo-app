@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
 
 import Sidebar from './components/Sidebar';
 import TodoListComponent from './components/TodoList';
@@ -34,6 +35,13 @@ export default function App() {
           <p className="font-medium text-lg">Select a list to get started</p>
         </div>
       )}
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          className:
+            'bg-gray-50 dark:bg-slate-600 dark:text-white rounded-md shadow-md',
+        }}
+      />
     </div>
   );
 }
