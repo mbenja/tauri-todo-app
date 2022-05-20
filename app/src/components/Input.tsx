@@ -9,7 +9,7 @@ export default function Input(props: InputProps) {
 
   return (
     <input
-      className="border border-gray-100 dark:border-slate-700 dark:text-black focus:outline-none py-1 px-2 rounded-md shadow-sm w-full"
+      className="border border-gray-100 dark:bg-slate-400 dark:border-slate-700 dark:placeholder:text-white dark:text-white focus:outline-none py-1 px-2 rounded-md shadow-sm w-full"
       onChange={(event) => onChange(event.target.value)}
       placeholder={placeholder}
       value={value}
