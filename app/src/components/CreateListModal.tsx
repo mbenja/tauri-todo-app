@@ -32,7 +32,7 @@ export default function CreateListModal(props: CreateListModalProps) {
     <Modal
       open={open}
       onClose={() => handleClose()}
-      title="Create a new todo list"
+      title="Create a new to-do list"
     >
       <form className="flex flex-col gap-2" onSubmit={(e) => handleCreate(e)}>
         <Input

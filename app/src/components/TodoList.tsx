@@ -69,7 +69,7 @@ export default function TodoListComponent(props: TodoListProps) {
       >
         <Input
           onChange={(v: string) => setNewTodoItemText(v)}
-          placeholder="Create a new todo..."
+          placeholder="Create a new to-do..."
           value={newTodoItemText}
         />
         <Button
